@@ -16,6 +16,18 @@ const HTTP_HOST = "0.0.0.0";
 
 const players = new Map<string, PlayerSlot>();
 
+function logPlayers() {
+  const count = players.size;
+
+  if (count === 0) {
+    console.log("No hay jugadores conectados");
+  } else if (count === 1) {
+    console.log("1 jugador conectado");
+  } else {
+    console.log(`${count} jugadores conectados`);
+  }
+}
+
 function getLocalIp(): string {
   const nets = networkInterfaces();
 
@@ -28,16 +40,13 @@ function getLocalIp(): string {
 
       const ip = net.address;
 
-      // ❌ descartar redes virtuales comunes
       if (
-        ip.startsWith("192.168.56.") || // VirtualBox
-        ip.startsWith("169.254.") || // APIPA
-        ip.startsWith("127.") // loopback
-      ) {
+        ip.startsWith("192.168.56.") ||
+        ip.startsWith("169.254.") ||
+        ip.startsWith("127.")
+      )
         continue;
-      }
 
-      // ✔️ priorizar redes típicas de LAN
       if (
         ip.startsWith("192.168.") ||
         ip.startsWith("10.") ||
@@ -60,31 +69,26 @@ function getServerUrl(): string {
 }
 
 function nextSlot(): number | null {
-  for (let slot = 0; slot < MAX_PLAYERS; slot += 1) {
-    const occupied = [...players.values()].some(
-      (player) => player.slot === slot,
-    );
+  for (let slot = 0; slot < MAX_PLAYERS; slot++) {
+    const occupied = [...players.values()].some((p) => p.slot === slot);
     if (!occupied) return slot;
   }
   return null;
 }
 
 function buildLobbyState(): LobbyState {
-  const orderedPlayers = [...players.values()].sort((a, b) => a.slot - b.slot);
-
   return {
     maxPlayers: MAX_PLAYERS,
-    connectedPlayers: orderedPlayers.length,
-    players: orderedPlayers,
+    connectedPlayers: players.size,
+    players: [...players.values()].sort((a, b) => a.slot - b.slot),
     serverUrl: getServerUrl(),
     updatedAt: Date.now(),
   };
 }
 
-function normalizeName(name: string | undefined, slot: number): string {
+function normalizeName(name: string | undefined, slot: number) {
   const trimmed = name?.trim();
-  if (trimmed && trimmed.length > 0) return trimmed.slice(0, 20);
-  return `Player ${slot + 1}`;
+  return trimmed ? trimmed.slice(0, 20) : `Jugador ${slot + 1}`;
 }
 
 const httpServer = createServer((req, res) => {
@@ -94,31 +98,17 @@ const httpServer = createServer((req, res) => {
   );
 
   if (req.method === "GET" && url.pathname === "/api/lobby") {
-    const lobby = buildLobbyState();
-
-    res.writeHead(200, {
-      "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "no-store",
-    });
-    res.end(JSON.stringify(lobby));
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(buildLobbyState()));
     return;
   }
 
-  if (req.method === "GET" && url.pathname === "/health") {
-    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-    res.end(JSON.stringify({ ok: true }));
-    return;
-  }
-
-  res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
-  res.end(JSON.stringify({ error: "Not found" }));
+  res.writeHead(404);
+  res.end();
 });
 
 const io = new Server(httpServer, {
-  cors: {
-    origin: true,
-    methods: ["GET", "POST"],
-  },
+  cors: { origin: true },
 });
 
 function broadcastLobby() {
@@ -130,22 +120,16 @@ io.on("connection", (socket) => {
 
   socket.on(
     "controller:join",
-    (
-      payload: ControllerJoinPayload,
-      ack?: (response: ControllerJoinAck) => void,
-    ) => {
-      if (players.has(socket.id)) {
-        ack?.({ ok: false, reason: "already_joined" });
-        return;
-      }
-
+    (payload: ControllerJoinPayload, ack?: (r: ControllerJoinAck) => void) => {
       if (players.size >= MAX_PLAYERS) {
+        console.log("Intento de conexión rechazado: lobby lleno");
         ack?.({ ok: false, reason: "lobby_full" });
         return;
       }
 
       const slot = nextSlot();
       if (slot === null) {
+        console.log("Error: no hay slots disponibles");
         ack?.({ ok: false, reason: "lobby_full" });
         return;
       }
@@ -159,11 +143,12 @@ io.on("connection", (socket) => {
       };
 
       players.set(socket.id, player);
-      socket.data.playerId = socket.id;
 
-      const lobby = buildLobbyState();
-      ack?.({ ok: true, player, lobby });
-      io.emit("player:joined", player);
+      console.log(`Jugador conectado: ${player.name}`);
+      logPlayers();
+
+      ack?.({ ok: true, player, lobby: buildLobbyState() });
+
       broadcastLobby();
     },
   );
@@ -176,7 +161,6 @@ io.on("connection", (socket) => {
       playerId: player.id,
       slot: player.slot,
       input,
-      at: Date.now(),
     });
   });
 
@@ -185,15 +169,14 @@ io.on("connection", (socket) => {
     if (!player) return;
 
     players.delete(socket.id);
-    io.emit("player:left", {
-      id: player.id,
-      slot: player.slot,
-    });
+
+    console.log(`Jugador desconectado: ${player.name}`);
+    logPlayers();
+
     broadcastLobby();
   });
 });
 
 httpServer.listen(PORT, HTTP_HOST, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Host server running at ${getServerUrl()}`);
+  console.log(`Servidor iniciado en ${getServerUrl()}`);
 });
