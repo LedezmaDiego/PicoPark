@@ -251,7 +251,7 @@ export default function App() {
       <View style={styles.barraSuperior}>
         <View style={styles.indicadorLed}>
           <View style={[styles.led, styles.ledEncendido]} />
-          <Text style={styles.textoLed}>P1</Text>
+          <Text style={styles.textoLed}>Conectado</Text>
         </View>
         <View style={styles.botonDesconectarFantasmal}>
           <TouchableOpacity onPress={desconectarDelServidor}>
@@ -297,7 +297,7 @@ export default function App() {
             onLayout={capturarLayout(layoutStart)}
           >
             <View style={styles.botonStartVisual}>
-              <Text style={styles.textoStartVisual}>START</Text>
+              <Text style={styles.textoStartVisual}>Iniciar</Text>
             </View>
           </View>
 
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#cc0000",
     borderRadius: 5,
   },
-  textoDesconectar: { color: "#fff", fontSize: 10, fontWeight: "bold" },
+  textoDesconectar: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   zonaControles: { flex: 1, position: "relative" },
   capaVisualFantasmal: {
     ...StyleSheet.absoluteFillObject,
