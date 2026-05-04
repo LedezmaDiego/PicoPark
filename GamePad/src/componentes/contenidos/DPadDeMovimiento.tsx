@@ -3,26 +3,38 @@ import React from "react";
 import { LayoutChangeEvent, StyleSheet, View } from "react-native";
 import { COLORES } from "../../constantes/colores";
 
-type Props = { onCapturarLayout: (evento: LayoutChangeEvent) => void };
+type Props = {
+  onCapturarLayout: (evento: LayoutChangeEvent) => void;
+  onCapturarLayoutArriba: (evento: LayoutChangeEvent) => void;
+  onCapturarLayoutAbajo: (evento: LayoutChangeEvent) => void;
+  onCapturarLayoutIzquierda: (evento: LayoutChangeEvent) => void;
+  onCapturarLayoutDerecha: (evento: LayoutChangeEvent) => void;
+};
 
-const DPadDeMovimiento = ({ onCapturarLayout }: Props) => (
+const DPadDeMovimiento = ({
+  onCapturarLayout,
+  onCapturarLayoutArriba,
+  onCapturarLayoutAbajo,
+  onCapturarLayoutIzquierda,
+  onCapturarLayoutDerecha,
+}: Props) => (
   <View style={estilos.contenedor} onLayout={onCapturarLayout}>
     <View style={estilos.fila}>
-      <View style={estilos.botonDireccion}>
+      <View style={estilos.botonDireccion} onLayout={onCapturarLayoutArriba}>
         <Feather name="chevron-up" size={42} color={COLORES.TEXTO_CLARO} />
       </View>
     </View>
     <View style={estilos.filaCentro}>
-      <View style={estilos.botonDireccion}>
+      <View style={estilos.botonDireccion} onLayout={onCapturarLayoutIzquierda}>
         <Feather name="chevron-left" size={42} color={COLORES.TEXTO_CLARO} />
       </View>
       <View style={estilos.espacioVacio} />
-      <View style={estilos.botonDireccion}>
+      <View style={estilos.botonDireccion} onLayout={onCapturarLayoutDerecha}>
         <Feather name="chevron-right" size={42} color={COLORES.TEXTO_CLARO} />
       </View>
     </View>
     <View style={estilos.fila}>
-      <View style={estilos.botonDireccion}>
+      <View style={estilos.botonDireccion} onLayout={onCapturarLayoutAbajo}>
         <Feather name="chevron-down" size={42} color={COLORES.TEXTO_CLARO} />
       </View>
     </View>

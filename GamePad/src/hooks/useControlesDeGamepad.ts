@@ -1,5 +1,4 @@
 import { useRef, RefObject } from "react";
-import { ZONA_MUERTA_DPAD } from "../constantes/configDeRed";
 import { LayoutDeZona } from "../tipos";
 import {
   GestureResponderEvent,
@@ -13,6 +12,10 @@ const useControlesDeGamepad = (
 ) => {
   const layoutDpad = useRef<LayoutDeZona | null>(null);
   const layoutBotonSalto = useRef<LayoutDeZona | null>(null);
+  const layoutBotonArriba = useRef<LayoutDeZona | null>(null);
+  const layoutBotonAbajo = useRef<LayoutDeZona | null>(null);
+  const layoutBotonIzquierda = useRef<LayoutDeZona | null>(null);
+  const layoutBotonDerecha = useRef<LayoutDeZona | null>(null);
   const teclasActivasRef = useRef<Set<string>>(new Set());
 
   const estaEnZona = (
@@ -49,25 +52,6 @@ const useControlesDeGamepad = (
       });
     };
 
-  const calcularDireccionDpad = (px: number, py: number): string | null => {
-    const zona = layoutDpad.current;
-    if (!zona) return null;
-
-    const centroDpadX = zona.x + zona.width / 2;
-    const centroDpadY = zona.y + zona.height / 2;
-    const diffX = px - centroDpadX;
-    const diffY = py - centroDpadY;
-
-    const estaEnZonaMuerta =
-      Math.abs(diffX) < ZONA_MUERTA_DPAD && Math.abs(diffY) < ZONA_MUERTA_DPAD;
-    if (estaEnZonaMuerta) return null;
-
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-      return diffX > 0 ? "ArrowRight" : "ArrowLeft";
-    }
-    return diffY > 0 ? "ArrowDown" : "ArrowUp";
-  };
-
   const resolverTeclasActivas = (touches: NativeTouchEvent[]): Set<string> => {
     const teclasNuevas = new Set<string>();
 
@@ -78,9 +62,21 @@ const useControlesDeGamepad = (
         teclasNuevas.add("Space");
         continue;
       }
-      if (estaEnZona(pageX, pageY, layoutDpad.current)) {
-        const direccion = calcularDireccionDpad(pageX, pageY);
-        if (direccion) teclasNuevas.add(direccion);
+      if (estaEnZona(pageX, pageY, layoutBotonArriba.current)) {
+        teclasNuevas.add("ArrowUp");
+        continue;
+      }
+      if (estaEnZona(pageX, pageY, layoutBotonAbajo.current)) {
+        teclasNuevas.add("ArrowDown");
+        continue;
+      }
+      if (estaEnZona(pageX, pageY, layoutBotonIzquierda.current)) {
+        teclasNuevas.add("ArrowLeft");
+        continue;
+      }
+      if (estaEnZona(pageX, pageY, layoutBotonDerecha.current)) {
+        teclasNuevas.add("ArrowRight");
+        continue;
       }
     }
 
@@ -101,13 +97,16 @@ const useControlesDeGamepad = (
       if (!teclasActivasRef.current.has(teclaNueva))
         alPresionarTecla(teclaNueva);
     });
-
     teclasActivasRef.current = teclasNuevas;
   };
 
   return {
     layoutDpad,
     layoutBotonSalto,
+    layoutBotonArriba,
+    layoutBotonAbajo,
+    layoutBotonIzquierda,
+    layoutBotonDerecha,
     capturarLayoutDeZona,
     procesarToques,
   };

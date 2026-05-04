@@ -25,11 +25,19 @@ const App = () => {
   const { estaEscaneando, abrirEscanerQR, cerrarEscanerQR, handleQREscaneado } =
     useEscanerQR(handleIpEscaneada);
 
-  const { layoutDpad, layoutBotonSalto, capturarLayoutDeZona, procesarToques } =
-    useControlesDeGamepad(
-      (tecla) => enviarEventoDeControl("keydown", tecla),
-      (tecla) => enviarEventoDeControl("keyup", tecla),
-    );
+  const {
+    layoutDpad,
+    layoutBotonSalto,
+    layoutBotonArriba,
+    layoutBotonAbajo,
+    layoutBotonIzquierda,
+    layoutBotonDerecha,
+    capturarLayoutDeZona,
+    procesarToques,
+  } = useControlesDeGamepad(
+    (tecla) => enviarEventoDeControl("keydown", tecla),
+    (tecla) => enviarEventoDeControl("keyup", tecla),
+  );
 
   if (!estaConectado && estaEscaneando) {
     return (
@@ -63,6 +71,10 @@ const App = () => {
       <ContenedorDeGamepad
         onSalir={desconectarDelServidor}
         onCapturarLayoutDpad={capturarLayoutDeZona(layoutDpad)}
+        onCapturarLayoutArriba={capturarLayoutDeZona(layoutBotonArriba)}
+        onCapturarLayoutAbajo={capturarLayoutDeZona(layoutBotonAbajo)}
+        onCapturarLayoutIzquierda={capturarLayoutDeZona(layoutBotonIzquierda)}
+        onCapturarLayoutDerecha={capturarLayoutDeZona(layoutBotonDerecha)}
         onCapturarLayoutSalto={capturarLayoutDeZona(layoutBotonSalto)}
         onProcesarToques={procesarToques}
       />

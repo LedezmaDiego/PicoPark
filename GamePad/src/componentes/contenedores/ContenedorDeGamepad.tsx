@@ -15,6 +15,10 @@ import { COLORES } from "../../constantes/colores";
 type Props = {
   onSalir: () => void;
   onCapturarLayoutDpad: (e: LayoutChangeEvent) => void;
+  onCapturarLayoutArriba: (e: LayoutChangeEvent) => void;
+  onCapturarLayoutAbajo: (e: LayoutChangeEvent) => void;
+  onCapturarLayoutIzquierda: (e: LayoutChangeEvent) => void;
+  onCapturarLayoutDerecha: (e: LayoutChangeEvent) => void;
   onCapturarLayoutSalto: (e: LayoutChangeEvent) => void;
   onProcesarToques: (e: GestureResponderEvent) => void;
 };
@@ -22,6 +26,10 @@ type Props = {
 const ContenedorDeGamepad = ({
   onSalir,
   onCapturarLayoutDpad,
+  onCapturarLayoutArriba,
+  onCapturarLayoutAbajo,
+  onCapturarLayoutIzquierda,
+  onCapturarLayoutDerecha,
   onCapturarLayoutSalto,
   onProcesarToques,
 }: Props) => (
@@ -38,7 +46,13 @@ const ContenedorDeGamepad = ({
       onTouchCancel={onProcesarToques}
     >
       <View style={estilos.capaVisual} pointerEvents="none">
-        <DPadDeMovimiento onCapturarLayout={onCapturarLayoutDpad} />
+        <DPadDeMovimiento
+          onCapturarLayout={onCapturarLayoutDpad}
+          onCapturarLayoutArriba={onCapturarLayoutArriba}
+          onCapturarLayoutAbajo={onCapturarLayoutAbajo}
+          onCapturarLayoutIzquierda={onCapturarLayoutIzquierda}
+          onCapturarLayoutDerecha={onCapturarLayoutDerecha}
+        />
         <BotonDeAccion onCapturarLayout={onCapturarLayoutSalto} />
       </View>
     </View>
