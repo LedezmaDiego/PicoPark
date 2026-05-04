@@ -13,6 +13,7 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { useKeepAwake } from "expo-keep-awake";
 import { Feather } from "@expo/vector-icons";
 import { io } from "socket.io-client";
+import { CameraView, useCameraPermissions } from "expo-camera";
 
 export default function App() {
   useKeepAwake();
@@ -20,6 +21,8 @@ export default function App() {
   const [direccionIp, setDireccionIp] = useState("192.168.:3000");
   const [estaConectado, setEstaConectado] = useState(false);
   const [estadoDeConexion, setEstadoDeConexion] = useState("Desconectado");
+  const [escaneandoQR, setEscaneandoQR] = useState(false);
+  const [permisoCamera, solicitarPermisoCamera] = useCameraPermissions();
 
   // Guardamos el layout real de cada zona
   const layoutDpad = useRef(null);
@@ -36,50 +39,68 @@ export default function App() {
     return () => ScreenOrientation.unlockAsync();
   }, []);
 
-  const conectarAlServidor = useCallback(() => {
-    if (!direccionIp) return;
-
-    // 🔥 SIEMPRE limpiar socket viejo
-    if (socketRef.current) {
-      socketRef.current.disconnect();
-      socketRef.current = null;
+  const abrirEscanerQR = async () => {
+    if (!permisoCamera?.granted) {
+      const resultado = await solicitarPermisoCamera();
+      if (!resultado.granted) return;
     }
+    setEscaneandoQR(true);
+  };
 
-    setEstadoDeConexion("Conectando...");
+  const onQREscaneado = ({ data }) => {
+    setEscaneandoQR(false);
+    // Sacar el "http://" si viene en el QR
+    const ipLimpia = data.replace("http://", "").replace("https://", "");
+    setDireccionIp(ipLimpia);
+    conectarAlServidor(ipLimpia);
+  };
 
-    socketRef.current = io(`http://${direccionIp}`, {
-      transports: ["websocket"],
-      query: { tipo: "gamepad" },
-    });
+  const conectarAlServidor = useCallback(
+    (ipOverride) => {
+      const ip = ipOverride || direccionIp;
+      if (!ip) return;
 
-    socketRef.current.on("connect", () => {
-      setEstaConectado(true);
-      setEstadoDeConexion("Conectado");
-    });
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
 
-    socketRef.current.on("disconnect", () => {
-      setEstaConectado(false);
-      setEstadoDeConexion("Desconectado");
-      teclasActivasRef.current.clear();
-    });
+      setEstadoDeConexion("Conectando...");
 
-    socketRef.current.on("servidorApagado", () => {
-      setEstaConectado(false);
-      setEstadoDeConexion("Servidor apagado");
-      teclasActivasRef.current.clear();
+      socketRef.current = io(`http://${ip}`, {
+        transports: ["websocket"],
+        query: { tipo: "gamepad" },
+      });
 
-      // 🔥 IMPORTANTE
-      socketRef.current = null;
-    });
-    socketRef.current.io.on("reconnect_attempt", () => {
-      console.log("Reintentando conexión...");
-    });
+      socketRef.current.on("connect", () => {
+        setEstaConectado(true);
+        setEstadoDeConexion("Conectado");
+      });
 
-    socketRef.current.on("connect_error", () => {
-      setEstaConectado(false);
-      setEstadoDeConexion("Error de red");
-    });
-  }, [direccionIp]);
+      socketRef.current.on("disconnect", () => {
+        setEstaConectado(false);
+        setEstadoDeConexion("Desconectado");
+        teclasActivasRef.current.clear();
+      });
+
+      socketRef.current.on("servidorApagado", () => {
+        setEstaConectado(false);
+        setEstadoDeConexion("Servidor apagado");
+        teclasActivasRef.current.clear();
+        socketRef.current = null;
+      });
+
+      socketRef.current.io.on("reconnect_attempt", () => {
+        console.log("Reintentando conexión...");
+      });
+
+      socketRef.current.on("connect_error", () => {
+        setEstaConectado(false);
+        setEstadoDeConexion("Error de red");
+      });
+    },
+    [direccionIp],
+  );
 
   const desconectarDelServidor = () => {
     if (socketRef.current) {
@@ -176,10 +197,32 @@ export default function App() {
   };
 
   if (!estaConectado) {
+    // Pantalla del escáner QR
+    if (escaneandoQR) {
+      return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+          <StatusBar hidden={true} />
+          <CameraView
+            style={{ flex: 1 }}
+            facing="back"
+            barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+            onBarcodeScanned={onQREscaneado}
+          />
+          <TouchableOpacity
+            style={styles.botonCancelarQR}
+            onPress={() => setEscaneandoQR(false)}
+          >
+            <Text style={styles.textoBotonSecundario}>Cancelar</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      );
+    }
+
+    // Pantalla normal de conexión
     return (
       <SafeAreaView style={styles.contenedorCentro}>
         <StatusBar style="dark" hidden={true} />
-        <Text style={styles.tituloSecundario}>Vincular Gamepad</Text>
+        <Text style={styles.tituloSecundario}>Vincular GamePad</Text>
         <TextInput
           style={styles.inputIp}
           placeholder="Ej: 192.168.1.39:3000"
@@ -190,9 +233,12 @@ export default function App() {
         />
         <TouchableOpacity
           style={styles.botonConectar}
-          onPress={conectarAlServidor}
+          onPress={() => conectarAlServidor()}
         >
           <Text style={styles.textoBotonSecundario}>Conectar con IP</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.botonQR} onPress={abrirEscanerQR}>
+          <Text style={styles.textoBotonSecundario}>Conectar con QR</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -400,5 +446,21 @@ const styles = StyleSheet.create({
     elevation: 8,
     borderWidth: 2,
     borderColor: "#b03a2e",
+  },
+  botonQR: {
+    backgroundColor: "#34C759",
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+    marginTop: 12,
+  },
+  botonCancelarQR: {
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
+    backgroundColor: "#cc0000",
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    borderRadius: 8,
   },
 });
