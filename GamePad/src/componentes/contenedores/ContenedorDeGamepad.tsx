@@ -10,13 +10,11 @@ import BotonDeAccion from "../contenidos/BotonDeAccion";
 import BotonParaSalir from "../contenidos/BotonParaSalir";
 import DPadDeMovimiento from "../contenidos/DPadDeMovimiento";
 import IndicadorDeConexion from "../contenidos/IndicadorDeConexion";
-import BotonParaIniciar from "../contenidos/BotonParaIniciar";
 
 type Props = {
   onSalir: () => void;
   onCapturarLayoutDpad: (e: LayoutChangeEvent) => void;
   onCapturarLayoutSalto: (e: LayoutChangeEvent) => void;
-  onCapturarLayoutStart: (e: LayoutChangeEvent) => void;
   onProcesarToques: (e: GestureResponderEvent) => void;
 };
 
@@ -24,7 +22,6 @@ const ContenedorDeGamepad = ({
   onSalir,
   onCapturarLayoutDpad,
   onCapturarLayoutSalto,
-  onCapturarLayoutStart,
   onProcesarToques,
 }: Props) => (
   <SafeAreaView style={estilos.contenedor}>
@@ -41,7 +38,6 @@ const ContenedorDeGamepad = ({
     >
       <View style={estilos.capaVisual} pointerEvents="none">
         <DPadDeMovimiento onCapturarLayout={onCapturarLayoutDpad} />
-        <BotonParaIniciar onCapturarLayout={onCapturarLayoutStart} />
         <BotonDeAccion onCapturarLayout={onCapturarLayoutSalto} />
       </View>
     </View>

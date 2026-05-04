@@ -1,7 +1,5 @@
-import { Feather } from "@expo/vector-icons";
 import React from "react";
-import { LayoutChangeEvent, StyleSheet, View } from "react-native";
-
+import { LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 type Props = {
   onCapturarLayout: (evento: LayoutChangeEvent) => void;
 };
@@ -9,7 +7,7 @@ type Props = {
 const BotonDeAccion = ({ onCapturarLayout }: Props) => (
   <View style={estilos.contenedor} onLayout={onCapturarLayout}>
     <View style={estilos.boton}>
-      <Feather name="triangle" size={40} color="white" style={estilos.icono} />
+      <Text style={estilos.letra}>A</Text>
     </View>
   </View>
 );
@@ -35,8 +33,10 @@ const estilos = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#b03a2e",
   },
-  icono: {
-    transform: [{ rotate: "90deg" }],
+  letra: {
+    color: "white",
+    fontSize: 48,
+    fontWeight: "bold",
   },
 });
 

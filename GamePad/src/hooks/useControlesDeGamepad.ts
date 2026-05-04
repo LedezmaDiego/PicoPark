@@ -1,7 +1,11 @@
-import { useRef } from "react";
-import { GestureResponderEvent, LayoutChangeEvent } from "react-native";
+import { useRef, RefObject } from "react";
 import { ZONA_MUERTA_DPAD } from "../constantes/configDeRed";
 import { LayoutDeZona } from "../tipos";
+import {
+  GestureResponderEvent,
+  LayoutChangeEvent,
+  NativeTouchEvent,
+} from "react-native";
 
 const useControlesDeGamepad = (
   alPresionarTecla: (tecla: string) => void,
@@ -9,7 +13,6 @@ const useControlesDeGamepad = (
 ) => {
   const layoutDpad = useRef<LayoutDeZona | null>(null);
   const layoutBotonSalto = useRef<LayoutDeZona | null>(null);
-  const layoutBotonStart = useRef<LayoutDeZona | null>(null);
   const teclasActivasRef = useRef<Set<string>>(new Set());
 
   const estaEnZona = (
@@ -27,8 +30,7 @@ const useControlesDeGamepad = (
   };
 
   const capturarLayoutDeZona =
-    (ref: React.MutableRefObject<LayoutDeZona | null>) =>
-    (evento: LayoutChangeEvent) => {
+    (ref: RefObject<LayoutDeZona | null>) => (evento: LayoutChangeEvent) => {
       (
         evento.target as unknown as {
           measure: (
@@ -66,16 +68,12 @@ const useControlesDeGamepad = (
     return diffY > 0 ? "ArrowDown" : "ArrowUp";
   };
 
-  const resolverTeclasActivas = (touches: React.Touch[]): Set<string> => {
+  const resolverTeclasActivas = (touches: NativeTouchEvent[]): Set<string> => {
     const teclasNuevas = new Set<string>();
 
     for (const toque of touches) {
       const { pageX, pageY } = toque;
 
-      if (estaEnZona(pageX, pageY, layoutBotonStart.current)) {
-        teclasNuevas.add("Enter");
-        continue;
-      }
       if (estaEnZona(pageX, pageY, layoutBotonSalto.current)) {
         teclasNuevas.add("Space");
         continue;
@@ -110,7 +108,6 @@ const useControlesDeGamepad = (
   return {
     layoutDpad,
     layoutBotonSalto,
-    layoutBotonStart,
     capturarLayoutDeZona,
     procesarToques,
   };
