@@ -22,25 +22,27 @@ const FormularioDeConexion = ({
 }: Props) => (
   <View style={estilos.contenedor}>
     <Text style={estilos.titulo}>Vincular GamePad</Text>
-    <TextInput
-      style={estilos.inputIp}
-      placeholder="Coloca la IP (Ej: 192.168.1.39:3000)"
-      placeholderTextColor="#aaa"
-      value={direccionIp}
-      onChangeText={onCambiarIp}
-      keyboardType="default"
-    />
-    <TouchableOpacity
-      style={estilos.botonConectarConIp}
-      onPress={onConectarConIp}
-    >
-      <Text style={estilos.textoDeBoton}>Conectar con IP</Text>
-    </TouchableOpacity>
+    <View style={estilos.filaInput}>
+      <TextInput
+        style={estilos.inputIp}
+        placeholder="Coloca la IP (Ej: 192.168.1.39:3000)"
+        placeholderTextColor="#aaa"
+        value={direccionIp}
+        onChangeText={onCambiarIp}
+        keyboardType="default"
+      />
+      <TouchableOpacity
+        style={estilos.botonConectarConIp}
+        onPress={onConectarConIp}
+      >
+        <Text style={estilos.textoDeBoton}>Vincular con IP</Text>
+      </TouchableOpacity>
+    </View>
     <TouchableOpacity
       style={estilos.botonConectarConQR}
       onPress={onAbrirEscanerQR}
     >
-      <Text style={estilos.textoDeBoton}>Conectar con QR</Text>
+      <Text style={estilos.textoDeBoton}>Vincular con QR</Text>
     </TouchableOpacity>
   </View>
 );
@@ -58,15 +60,20 @@ const estilos = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
+  filaInput: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    gap: 10,
+  },
   inputIp: {
     backgroundColor: "#333",
     color: "#fff",
-    width: 500,
+    width: 400, // un poco más angosto para dar lugar al botón
     padding: 15,
     borderRadius: 8,
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 20,
   },
   botonConectarConIp: {
     backgroundColor: "#007AFF",
