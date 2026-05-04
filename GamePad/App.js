@@ -17,9 +17,14 @@ import { io } from "socket.io-client";
 export default function App() {
   useKeepAwake();
 
-  const [direccionIp, setDireccionIp] = useState("192.168.1.39:3000");
+  const [direccionIp, setDireccionIp] = useState("192.168.:3000");
   const [estaConectado, setEstaConectado] = useState(false);
   const [estadoDeConexion, setEstadoDeConexion] = useState("Desconectado");
+
+  // Guardamos el layout real de cada zona
+  const layoutDpad = useRef(null);
+  const layoutJump = useRef(null);
+  const layoutStart = useRef(null);
 
   const socketRef = useRef(null);
   const teclasActivasRef = useRef(new Set());
@@ -40,7 +45,6 @@ export default function App() {
     socketRef.current = io(`http://${direccionIp}`, {
       transports: ["websocket"],
     });
-
     socketRef.current.on("connect", () => {
       setEstaConectado(true);
       setEstadoDeConexion("Conectado");
@@ -78,41 +82,45 @@ export default function App() {
     }
   };
 
+  const estaEnRect = (px, py, layout) => {
+    if (!layout) return false;
+    return (
+      px >= layout.x &&
+      px <= layout.x + layout.width &&
+      py >= layout.y &&
+      py <= layout.y + layout.height
+    );
+  };
+
   const procesarToquesGlobables = (e) => {
     const touches = e.nativeEvent.touches;
-    const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-
     let nuevasTeclas = new Set();
 
     for (let i = 0; i < touches.length; i++) {
       const { pageX, pageY } = touches[i];
 
-      // 1. ZONA START (Arriba al centro, alineado con lo visual)
-      const startW = 120; const startH = 60;
-      const startX = (screenWidth / 2) - (startW / 2);
-      const startY = 10; 
-
-      const tocandoStart = pageX >= startX && pageX <= startX + startW &&
-                           pageY >= startY && pageY <= startY + startH;
-
-      if (tocandoStart) {
-        nuevasTeclas.add("Enter"); 
-        continue; 
+      // 1. START
+      if (estaEnRect(pageX, pageY, layoutStart.current)) {
+        nuevasTeclas.add("Enter");
+        continue;
       }
 
-      // 2. ZONA ACCIÓN / SALTO (Mitad derecha)
-      if (pageX > screenWidth / 2) {
-        nuevasTeclas.add("Space"); 
-      } 
-      // 3. ZONA D-PAD (Mitad izquierda, abajo)
-      else {
-        const centroX = 150;
-        const centroY = screenHeight - 120;
+      // 2. SALTO
+      if (estaEnRect(pageX, pageY, layoutJump.current)) {
+        nuevasTeclas.add("Space");
+        continue;
+      }
 
-        const diffX = pageX - centroX;
-        const diffY = pageY - centroY;
+      // 3. D-PAD
+      if (estaEnRect(pageX, pageY, layoutDpad.current)) {
+        const l = layoutDpad.current;
+        const centroDpadX = l.x + l.width / 2;
+        const centroDpadY = l.y + l.height / 2;
+        const diffX = pageX - centroDpadX;
+        const diffY = pageY - centroDpadY;
 
-        if (Math.abs(diffX) < 30 && Math.abs(diffY) < 30) continue;
+        // Zona muerta central
+        if (Math.abs(diffX) < 25 && Math.abs(diffY) < 25) continue;
 
         if (Math.abs(diffX) > Math.abs(diffY)) {
           if (diffX > 0) nuevasTeclas.add("ArrowRight");
@@ -122,6 +130,7 @@ export default function App() {
           else nuevasTeclas.add("ArrowUp");
         }
       }
+      // Toque fuera de toda zona → se ignora
     }
 
     teclasActivasRef.current.forEach((teclaVieja) => {
@@ -137,11 +146,19 @@ export default function App() {
     teclasActivasRef.current = nuevasTeclas;
   };
 
+  const capturarLayout = (ref) => (event) => {
+    const { x, y, width, height } = event.nativeEvent.layout;
+    // pageX/pageY en onLayout no existe, usamos measure para coords absolutas
+    event.target.measure((fx, fy, w, h, px, py) => {
+      ref.current = { x: px, y: py, width: w, height: h };
+    });
+  };
+
   if (!estaConectado) {
     return (
       <SafeAreaView style={styles.contenedorCentro}>
         <StatusBar style="dark" hidden={true} />
-        <Text style={styles.tituloSecundario}>Vincular Gamepad ETEC</Text>
+        <Text style={styles.tituloSecundario}>Vincular</Text>
         <TextInput
           style={styles.inputIp}
           placeholder="Ej: 192.168.1.39:3000"
@@ -163,17 +180,16 @@ export default function App() {
   return (
     <SafeAreaView style={styles.contenedorGamepad}>
       <StatusBar hidden={true} />
-      
+
       <View style={styles.barraSuperior}>
         <View style={styles.indicadorLed}>
           <View style={[styles.led, styles.ledEncendido]} />
           <Text style={styles.textoLed}>P1</Text>
         </View>
-        
         <View style={styles.botonDesconectarFantasmal}>
-            <TouchableOpacity onPress={desconectarDelServidor}>
-                <Text style={styles.textoDesconectar}>Salir</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={desconectarDelServidor}>
+            <Text style={styles.textoDesconectar}>Salir</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -185,31 +201,48 @@ export default function App() {
         onTouchCancel={procesarToquesGlobables}
       >
         <View style={styles.capaVisualFantasmal} pointerEvents="none">
-          
-          <View style={styles.zonaDPad}>
+          {/* D-PAD — capturamos su posición real en pantalla */}
+          <View style={styles.zonaDPad} onLayout={capturarLayout(layoutDpad)}>
             <View style={styles.filaDPad}>
-              <View style={styles.botonDireccion}><Feather name="chevron-up" size={42} color="#555" /></View>
+              <View style={styles.botonDireccion}>
+                <Feather name="chevron-up" size={42} color="#555" />
+              </View>
             </View>
             <View style={styles.filaCentroDPad}>
-              <View style={styles.botonDireccion}><Feather name="chevron-left" size={42} color="white" /></View>
+              <View style={styles.botonDireccion}>
+                <Feather name="chevron-left" size={42} color="white" />
+              </View>
               <View style={styles.centroDPadVacio} />
-              <View style={styles.botonDireccion}><Feather name="chevron-right" size={42} color="white" /></View>
+              <View style={styles.botonDireccion}>
+                <Feather name="chevron-right" size={42} color="white" />
+              </View>
             </View>
             <View style={styles.filaDPad}>
-              <View style={styles.botonDireccion}><Feather name="chevron-down" size={42} color="#555" /></View>
+              <View style={styles.botonDireccion}>
+                <Feather name="chevron-down" size={42} color="#555" />
+              </View>
             </View>
           </View>
 
-          {/* BOTÓN START CORREGIDO (Arriba al centro) */}
-          <View style={styles.contenedorStartVisual}>
+          {/* START centrado */}
+          <View
+            style={styles.contenedorStartVisual}
+            onLayout={capturarLayout(layoutStart)}
+          >
             <View style={styles.botonStartVisual}>
-                <Text style={styles.textoStartVisual}>START</Text>
+              <Text style={styles.textoStartVisual}>START</Text>
             </View>
           </View>
 
-          <View style={styles.zonaAccion}>
+          {/* BOTÓN SALTO — capturamos su posición real */}
+          <View style={styles.zonaAccion} onLayout={capturarLayout(layoutJump)}>
             <View style={styles.botonAccion}>
-              <Feather name="triangle" size={40} color="white" style={{transform: [{rotate: '90deg'}]}} />
+              <Feather
+                name="triangle"
+                size={40}
+                color="white"
+                style={{ transform: [{ rotate: "90deg" }] }}
+              />
             </View>
           </View>
         </View>
@@ -219,33 +252,132 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  contenedorCentro: { flex: 1, backgroundColor: "#1e1e1e", justifyContent: "center", alignItems: "center" },
-  tituloSecundario: { fontSize: 24, color: "#fff", fontWeight: "bold", marginBottom: 20 },
-  inputIp: { backgroundColor: "#333", color: "#fff", width: 250, padding: 15, borderRadius: 8, fontSize: 18, textAlign: "center", marginBottom: 20 },
-  botonConectar: { backgroundColor: "#007AFF", paddingVertical: 15, paddingHorizontal: 40, borderRadius: 8 },
+  contenedorCentro: {
+    flex: 1,
+    backgroundColor: "#1e1e1e",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tituloSecundario: {
+    fontSize: 24,
+    color: "#fff",
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  inputIp: {
+    backgroundColor: "#333",
+    color: "#fff",
+    width: 250,
+    padding: 15,
+    borderRadius: 8,
+    fontSize: 18,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  botonConectar: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+  },
   textoBotonSecundario: { color: "#fff", fontSize: 18, fontWeight: "bold" },
   textoEstado: { color: "#aaa", marginTop: 20 },
   contenedorGamepad: { flex: 1, backgroundColor: "#121212" },
-  barraSuperior: { flexDirection: "row", justifyContent: "space-between", alignItems:'center', paddingHorizontal: 20, paddingTop: 10, height: 50, zIndex: 10 },
-  indicadorLed: { flexDirection: "row", alignItems: "center", backgroundColor:'rgba(0,0,0,0.5)', padding:5, borderRadius:10 },
+  barraSuperior: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    height: 50,
+    zIndex: 10,
+  },
+  indicadorLed: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    padding: 5,
+    borderRadius: 10,
+  },
   led: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
-  ledEncendido: { backgroundColor: "#00FF00", shadowColor: "#00FF00", shadowOpacity: 0.8, shadowRadius: 5 },
-  textoLed: { color: "#fff", fontWeight: "bold", fontSize:12 },
-  botonDesconectarFantasmal: { padding: 6, backgroundColor: "#cc0000", borderRadius: 5 },
-  textoDesconectar: { color: "#fff", fontSize: 10, fontWeight:'bold' },
+  ledEncendido: {
+    backgroundColor: "#00FF00",
+    shadowColor: "#00FF00",
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+  },
+  textoLed: { color: "#fff", fontWeight: "bold", fontSize: 12 },
+  botonDesconectarFantasmal: {
+    padding: 6,
+    backgroundColor: "#cc0000",
+    borderRadius: 5,
+  },
+  textoDesconectar: { color: "#fff", fontSize: 10, fontWeight: "bold" },
   zonaControles: { flex: 1, position: "relative" },
-  capaVisualFantasmal: { ...StyleSheet.absoluteFillObject, flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 30, paddingBottom: 20 },
+  capaVisualFantasmal: {
+    ...StyleSheet.absoluteFillObject,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 30,
+    paddingBottom: 20,
+  },
   zonaDPad: { alignItems: "center", justifyContent: "center", opacity: 0.8 },
   filaDPad: { flexDirection: "row", justifyContent: "center" },
   filaCentroDPad: { flexDirection: "row", alignItems: "center" },
-  botonDireccion: { width: 65, height: 65, backgroundColor: "#222", justifyContent: "center", alignItems: "center", margin: 2, borderRadius: 10, borderWidth:1, borderColor:'#333' },
+  botonDireccion: {
+    width: 65,
+    height: 65,
+    backgroundColor: "#222",
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 2,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#333",
+  },
   centroDPadVacio: { width: 65, height: 65, margin: 2 },
-  
-  // Modificado: Arriba en el medio exacto de la pantalla
-  contenedorStartVisual: { position:'absolute', top: 10, left: (Dimensions.get('window').width / 2) - 60, width:120, alignItems:'center'},
-  botonStartVisual: { width: 100, height: 40, backgroundColor: "#444", borderRadius: 20, justifyContent: 'center', alignItems: 'center', borderWidth:1, borderColor:'#555'},
-  textoStartVisual: { color: '#aaa', fontSize: 16, fontWeight: 'bold', letterSpacing: 1},
-
-  zonaAccion: { alignItems: "center", justifyContent: "center", paddingRight: 10 },
-  botonAccion: { width: 100, height: 100, backgroundColor: "#E74C3C", borderRadius: 50, justifyContent: "center", alignItems: "center", shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 5, elevation: 8, borderWidth:2, borderColor:'#b03a2e' },
+  contenedorStartVisual: {
+    position: "absolute",
+    top: 10,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  botonStartVisual: {
+    width: 100,
+    height: 40,
+    backgroundColor: "#444",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#555",
+  },
+  textoStartVisual: {
+    color: "#aaa",
+    fontSize: 16,
+    fontWeight: "bold",
+    letterSpacing: 1,
+  },
+  zonaAccion: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingRight: 10,
+  },
+  botonAccion: {
+    width: 100,
+    height: 100,
+    backgroundColor: "#E74C3C",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 8,
+    borderWidth: 2,
+    borderColor: "#b03a2e",
+  },
 });
