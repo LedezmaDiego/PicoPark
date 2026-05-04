@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Piko Park</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      background-color: #222;
+      color: #fff;
+      font-family: sans-serif;
+    "
+  >
+    <h1 style="margin-top: 10px; font-size: 24px">
+      Piko Park - Escanea para jugar
+    </h1>
+
+    <div id="juego" style="margin-top: 10px"></div>
+
+    <div style="margin-top: 20px">
+      <p id="ipTexto" style="font-size: 18px; font-weight: bold"></p>
+      <canvas
+        id="qr"
+        style="border: 4px solid #fff; border-radius: 8px"
+      ></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="game.js"></script>
+
+    <script>
+      fetch("/ip")
+        .then((r) => r.json())
+        .then((data) => {
+          // Acá armamos la URL para que el celular entre directo a la app de Gamepad
+          const url = `http://${data.ip}:3000`;
+          document.getElementById("ipTexto").innerText = "GamePad URL: " + url;
+          QRCode.toCanvas(document.getElementById("qr"), url, { width: 150 });
+        });
+    </script>
+  </body>
+</html>

@@ -1,37 +1,30 @@
 {
   "expo": {
-    "name": "gamepad",
-    "slug": "gamepad",
+    "name": "GamePad",
+    "slug": "GamePad",
     "version": "1.0.0",
-    "orientation": "landscape",
-    "icon": "./assets/images/icon.png",
-    "scheme": "gamepad",
-    "userInterfaceStyle": "automatic",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.CAMERA", "android.permission.CAMERA"],
-      "package": "com.ledezmadiego.picoparkcontroller"
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.GamePad"
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
-    "plugins": ["expo-router"],
-    "experiments": {
-      "typedRoutes": true
+      "favicon": "./assets/favicon.png"
     }
   }
 }
