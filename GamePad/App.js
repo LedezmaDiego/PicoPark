@@ -179,10 +179,11 @@ export default function App() {
     return (
       <SafeAreaView style={styles.contenedorCentro}>
         <StatusBar style="dark" hidden={true} />
-        <Text style={styles.tituloSecundario}>Vincular</Text>
+        <Text style={styles.tituloSecundario}>Vincular Gamepad</Text>
         <TextInput
           style={styles.inputIp}
           placeholder="Ej: 192.168.1.39:3000"
+          placeholderTextColor="#aaa"
           value={direccionIp}
           onChangeText={setDireccionIp}
           keyboardType="default"
@@ -191,9 +192,8 @@ export default function App() {
           style={styles.botonConectar}
           onPress={conectarAlServidor}
         >
-          <Text style={styles.textoBotonSecundario}>Conectar</Text>
+          <Text style={styles.textoBotonSecundario}>Conectar con IP</Text>
         </TouchableOpacity>
-        <Text style={styles.textoEstado}>{estadoDeConexion}</Text>
       </SafeAreaView>
     );
   }
