@@ -61,10 +61,10 @@ const estilos = StyleSheet.create({
   inputIp: {
     backgroundColor: "#333",
     color: "#fff",
-    width: 250,
+    width: 500,
     padding: 15,
     borderRadius: 8,
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "center",
     marginBottom: 20,
   },
