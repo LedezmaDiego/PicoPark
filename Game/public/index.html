@@ -35,9 +35,10 @@
       fetch("/ip")
         .then((r) => r.json())
         .then((data) => {
-          // Acá armamos la URL para que el celular entre directo a la app de Gamepad
           const url = `http://${data.ip}:3000`;
-          document.getElementById("ipTexto").innerText = "IP: " + url;
+          const texto = `${data.ip}:3000`;
+
+          document.getElementById("ipTexto").innerText = "IP: " + texto;
           QRCode.toCanvas(document.getElementById("qr"), url, { width: 150 });
         });
     </script>

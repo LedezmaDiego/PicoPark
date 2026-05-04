@@ -30,7 +30,6 @@ function obtenerIPLocal() {
       if (net.family !== "IPv4" || net.internal) continue;
       const ip = net.address;
 
-      // Ignorar IPs de VirtualBox (generalmente 192.168.56.X)
       if (ip.startsWith("192.168.56.")) continue;
 
       if (
@@ -57,30 +56,32 @@ app.get("/ip", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  const esPantalla = socket.handshake.query.tipo === "pantalla";
+  const tipo = socket.handshake.query.tipo;
+  const esPantalla = tipo === "pantalla";
+  const esGamepad = tipo === "gamepad";
 
   if (esPantalla) {
-    console.log("🖥️  PANTALLA PRINCIPAL CONECTADA");
-    console.log("📢 Notificando reinicio de servidor a todos los clientes");
+    console.log("Videojuego conectado");
+    console.log("Reinicio de juego");
     io.emit("servidorReiniciado");
-  } else {
+  } else if (esGamepad) {
     if (cantidadJugadores >= 4) {
-      console.log("❌ RECHAZADO: Sala llena");
+      console.log("Conexion rechazada: sala llena");
       socket.disconnect(true);
       return;
     }
 
-    const colorAsignado = coloresParaJugadores[cantidadJugadores];
     cantidadJugadores++;
 
-    console.log(
-      `📱 MANDO CONECTADO [ID: ${socket.id}]. Total Jugadores: ${cantidadJugadores}`,
-    );
+    console.log(`Gamepad conectado - jugadores: ${cantidadJugadores}`);
 
     io.emit("nuevoJugador", {
       idDelSocket: socket.id,
-      color: colorAsignado,
+      color: coloresParaJugadores[cantidadJugadores - 1],
     });
+  } else {
+    // 🔒 Cualquier otra cosa NO cuenta como jugador
+    console.log("Conexion ignorada (tipo desconocido)");
   }
 
   socket.on("message", (msg) => {
@@ -92,23 +93,51 @@ io.on("connection", (socket) => {
   });
 
   socket.on("error", (err) => {
-    console.log(`⚠️ ERROR DE CONEXIÓN [ID: ${socket.id}]:`, err.message);
+    console.log(`error de conexion: ${err.message}`);
   });
 
   socket.on("disconnect", () => {
     if (esPantalla) {
-      console.log("🖥️  PANTALLA PRINCIPAL DESCONECTADA");
-    } else {
+      console.log("Videojuego desconectado");
+    } else if (esGamepad) {
       cantidadJugadores--;
-      console.log(
-        `👋 MANDO DESCONECTADO [ID: ${socket.id}]. Total Jugadores: ${cantidadJugadores}`,
-      );
+      console.log(`Gamepad desconectado - jugadores: ${cantidadJugadores}`);
       io.emit("jugadorDesconectado", socket.id);
     }
   });
 });
 
 http.listen(PUERTO, "0.0.0.0", () => {
-  console.log(`🚀 SERVIDOR LISTO EN: http://${ip}:${PUERTO}`);
-  console.log(`📱 Usá esta IP en el gamepad: ${ip}:${PUERTO}`);
+  console.log(`videojuego funcionando en ${ip}:${PUERTO}`);
+  console.log(`conectar gamepads a ${ip}:${PUERTO}`);
 });
+
+function cerrarServidor() {
+  console.log("Apagando servidor...");
+
+  // Avisar a los clientes (opcional)
+  io.emit("servidorApagado");
+
+  // Desconectar todos los sockets
+  io.sockets.sockets.forEach((socket) => {
+    socket.disconnect(true);
+  });
+
+  // Cerrar servidor HTTP
+  http.close(() => {
+    console.log("Servidor cerrado correctamente");
+    process.exit(0);
+  });
+
+  // Failsafe (por si algo queda colgado)
+  setTimeout(() => {
+    console.log("Forzando cierre del servidor");
+    process.exit(1);
+  }, 3000);
+}
+
+// Ctrl + C
+process.on("SIGINT", cerrarServidor);
+
+// También cubre kill en algunos sistemas
+process.on("SIGTERM", cerrarServidor);
