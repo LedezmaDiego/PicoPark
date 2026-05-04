@@ -76,7 +76,7 @@ const estilos = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 30,
+    paddingHorizontal: 60,
     paddingBottom: 20,
   },
 });
