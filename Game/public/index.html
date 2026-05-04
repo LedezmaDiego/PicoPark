@@ -16,9 +16,7 @@
       font-family: sans-serif;
     "
   >
-    <h1 style="margin-top: 10px; font-size: 24px">
-      Piko Park - Escanea para jugar
-    </h1>
+    <h1 style="margin-top: 10px; font-size: 24px">Piko Park</h1>
 
     <div id="juego" style="margin-top: 10px"></div>
 
@@ -39,7 +37,7 @@
         .then((data) => {
           // Acá armamos la URL para que el celular entre directo a la app de Gamepad
           const url = `http://${data.ip}:3000`;
-          document.getElementById("ipTexto").innerText = "GamePad URL: " + url;
+          document.getElementById("ipTexto").innerText = "IP: " + url;
           QRCode.toCanvas(document.getElementById("qr"), url, { width: 150 });
         });
     </script>
