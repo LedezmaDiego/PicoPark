@@ -81,7 +81,16 @@ io.on("connection", (socket) => {
     // 🔒 Cualquier otra cosa NO cuenta como jugador
     console.log("Conexion ignorada (tipo desconocido)");
   }
-
+  socket.on("pedirJugadoresConectados", () => {
+    let indice = 0;
+    gamepadsConectados.forEach((id) => {
+      socket.emit("nuevoJugador", {
+        idDelSocket: id,
+        color: coloresParaJugadores[indice],
+      });
+      indice++;
+    });
+  });
   socket.on("message", (msg) => {
     io.emit("inputDeJugador", {
       idDelSocket: socket.id,

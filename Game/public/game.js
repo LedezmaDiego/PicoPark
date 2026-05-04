@@ -363,6 +363,7 @@ class SceneGame extends Phaser.Scene {
       nivelActual = 1;
       this.scene.restart();
     });
+    socket.emit("pedirJugadoresConectados");
   }
 
   handleInputGame(input) {
