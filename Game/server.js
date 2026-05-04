@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
     io.emit("servidorReiniciado");
   } else if (esGamepad) {
     if (gamepadsConectados.size >= 4) {
-      console.log("Conexion rechazada: sala llena");
+      console.log("Conexion rechazada: sala llena (Máximo de 4 jugadores)");
       socket.disconnect(true);
       return;
     }
@@ -78,7 +78,6 @@ io.on("connection", (socket) => {
       color: coloresParaJugadores[indice],
     });
   } else {
-    // 🔒 Cualquier otra cosa NO cuenta como jugador
     console.log("Conexion ignorada (tipo desconocido)");
   }
   socket.on("pedirJugadoresConectados", () => {
