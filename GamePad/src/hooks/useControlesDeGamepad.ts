@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { LayoutChangeEvent } from "react-native";
+import { GestureResponderEvent, LayoutChangeEvent } from "react-native";
 import { ZONA_MUERTA_DPAD } from "../constantes/configDeRed";
 import { LayoutDeZona } from "../tipos";
 
@@ -29,18 +29,22 @@ const useControlesDeGamepad = (
   const capturarLayoutDeZona =
     (ref: React.MutableRefObject<LayoutDeZona | null>) =>
     (evento: LayoutChangeEvent) => {
-      (evento.target as any).measure(
-        (
-          _fx: number,
-          _fy: number,
-          w: number,
-          h: number,
-          px: number,
-          py: number,
-        ) => {
-          ref.current = { x: px, y: py, width: w, height: h };
-        },
-      );
+      (
+        evento.target as unknown as {
+          measure: (
+            cb: (
+              _fx: number,
+              _fy: number,
+              w: number,
+              h: number,
+              px: number,
+              py: number,
+            ) => void,
+          ) => void;
+        }
+      ).measure((_fx, _fy, w, h, px, py) => {
+        ref.current = { x: px, y: py, width: w, height: h };
+      });
     };
 
   const calcularDireccionDpad = (px: number, py: number): string | null => {
@@ -85,7 +89,7 @@ const useControlesDeGamepad = (
     return teclasNuevas;
   };
 
-  const procesarToques = (evento: any) => {
+  const procesarToques = (evento: GestureResponderEvent) => {
     const teclasNuevas = resolverTeclasActivas(evento.nativeEvent.touches);
     if (evento.nativeEvent.touches.length === 0) {
       teclasActivasRef.current.forEach((tecla) => alSoltarTecla(tecla));

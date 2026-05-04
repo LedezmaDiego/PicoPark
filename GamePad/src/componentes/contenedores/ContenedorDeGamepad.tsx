@@ -1,11 +1,15 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import {
+  StyleSheet,
+  View,
+  LayoutChangeEvent,
+  GestureResponderEvent,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BotonDeAccion from "../contenidos/BotonDeAccion";
 import BotonParaSalir from "../contenidos/BotonParaSalir";
 import DPadDeMovimiento from "../contenidos/DPadDeMovimiento";
 import IndicadorDeConexion from "../contenidos/IndicadorDeConexion";
-import { LayoutChangeEvent } from "react-native";
 import BotonParaIniciar from "../contenidos/BotonParaIniciar";
 
 type Props = {
@@ -13,7 +17,7 @@ type Props = {
   onCapturarLayoutDpad: (e: LayoutChangeEvent) => void;
   onCapturarLayoutSalto: (e: LayoutChangeEvent) => void;
   onCapturarLayoutStart: (e: LayoutChangeEvent) => void;
-  onProcesarToques: (e: any) => void;
+  onProcesarToques: (e: GestureResponderEvent) => void;
 };
 
 const ContenedorDeGamepad = ({

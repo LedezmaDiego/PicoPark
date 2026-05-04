@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { StatusBar } from "expo-status-bar";
 import ContenedorDeGamepad from "@/src/componentes/contenedores/ContenedorDeGamepad";
 import FormularioDeConexion from "@/src/componentes/contenidos/FormularioDeConexion";
