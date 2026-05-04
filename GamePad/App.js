@@ -37,23 +37,44 @@ export default function App() {
   }, []);
 
   const conectarAlServidor = useCallback(() => {
-    if (!direccionIp || socketRef.current) {
-      if (socketRef.current) socketRef.current.disconnect();
-      return;
+    if (!direccionIp) return;
+
+    // 🔥 SIEMPRE limpiar socket viejo
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
     }
+
     setEstadoDeConexion("Conectando...");
+
     socketRef.current = io(`http://${direccionIp}`, {
       transports: ["websocket"],
+      query: { tipo: "gamepad" },
     });
+
     socketRef.current.on("connect", () => {
       setEstaConectado(true);
       setEstadoDeConexion("Conectado");
     });
+
     socketRef.current.on("disconnect", () => {
       setEstaConectado(false);
       setEstadoDeConexion("Desconectado");
       teclasActivasRef.current.clear();
     });
+
+    socketRef.current.on("servidorApagado", () => {
+      setEstaConectado(false);
+      setEstadoDeConexion("Servidor apagado");
+      teclasActivasRef.current.clear();
+
+      // 🔥 IMPORTANTE
+      socketRef.current = null;
+    });
+    socketRef.current.io.on("reconnect_attempt", () => {
+      console.log("Reintentando conexión...");
+    });
+
     socketRef.current.on("connect_error", () => {
       setEstaConectado(false);
       setEstadoDeConexion("Error de red");
