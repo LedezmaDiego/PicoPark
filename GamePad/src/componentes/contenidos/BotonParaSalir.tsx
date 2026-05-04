@@ -1,9 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { COLORES } from "../../constantes/colores";
 
-type Props = {
-  onSalir: () => void;
-};
+type Props = { onSalir: () => void };
 
 const BotonParaSalir = ({ onSalir }: Props) => (
   <TouchableOpacity style={estilos.boton} onPress={onSalir}>
@@ -12,16 +11,8 @@ const BotonParaSalir = ({ onSalir }: Props) => (
 );
 
 const estilos = StyleSheet.create({
-  boton: {
-    padding: 6,
-    backgroundColor: "#cc0000",
-    borderRadius: 5,
-  },
-  texto: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  boton: { padding: 6, backgroundColor: COLORES.BOTON_SALIR, borderRadius: 5 },
+  texto: { color: COLORES.TEXTO_CLARO, fontSize: 16, fontWeight: "bold" },
 });
 
 export default BotonParaSalir;

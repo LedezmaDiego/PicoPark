@@ -1,8 +1,8 @@
 import React from "react";
 import { LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
-type Props = {
-  onCapturarLayout: (evento: LayoutChangeEvent) => void;
-};
+import { COLORES } from "../../constantes/colores";
+
+type Props = { onCapturarLayout: (evento: LayoutChangeEvent) => void };
 
 const BotonDeAccion = ({ onCapturarLayout }: Props) => (
   <View style={estilos.contenedor} onLayout={onCapturarLayout}>
@@ -21,7 +21,7 @@ const estilos = StyleSheet.create({
   boton: {
     width: 100,
     height: 100,
-    backgroundColor: "#E74C3C",
+    backgroundColor: COLORES.BOTON_ACCION,
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
@@ -31,13 +31,9 @@ const estilos = StyleSheet.create({
     shadowRadius: 5,
     elevation: 8,
     borderWidth: 2,
-    borderColor: "#b03a2e",
+    borderColor: COLORES.BOTON_ACCION_BORDE,
   },
-  letra: {
-    color: "white",
-    fontSize: 48,
-    fontWeight: "bold",
-  },
+  letra: { color: COLORES.TEXTO_CLARO, fontSize: 48, fontWeight: "bold" },
 });
 
 export default BotonDeAccion;

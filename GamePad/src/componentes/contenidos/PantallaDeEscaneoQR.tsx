@@ -2,6 +2,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { COLORES } from "../../constantes/colores";
 
 type Props = {
   onQREscaneado: (data: { data: string }) => void;
@@ -40,20 +41,11 @@ const PantallaDeEscaneoQR = ({ onQREscaneado, onCancelar }: Props) => {
 };
 
 const estilos = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
-  camara: {
-    flex: 1,
-  },
-  centrado: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  contenedor: { flex: 1, backgroundColor: COLORES.FONDO_CAMARA },
+  camara: { flex: 1 },
+  centrado: { flex: 1, justifyContent: "center", alignItems: "center" },
   textoSinPermiso: {
-    color: "#fff",
+    color: COLORES.TEXTO_CLARO,
     fontSize: 18,
     marginBottom: 20,
   },
@@ -61,13 +53,13 @@ const estilos = StyleSheet.create({
     position: "absolute",
     bottom: 40,
     alignSelf: "center",
-    backgroundColor: "#cc0000",
+    backgroundColor: COLORES.BOTON_CANCELAR,
     paddingVertical: 14,
     paddingHorizontal: 40,
     borderRadius: 8,
   },
   textoBotonCancelar: {
-    color: "#fff",
+    color: COLORES.TEXTO_CLARO,
     fontSize: 18,
     fontWeight: "bold",
   },

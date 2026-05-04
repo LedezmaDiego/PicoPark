@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { COLORES } from "../../constantes/colores";
 
 type Props = {
   direccionIp: string;
@@ -26,7 +27,7 @@ const FormularioDeConexion = ({
       <TextInput
         style={estilos.inputIp}
         placeholder="Coloca la IP (Ej: 192.168.1.39:3000)"
-        placeholderTextColor="#aaa"
+        placeholderTextColor={COLORES.TEXTO_PLACEHOLDER}
         value={direccionIp}
         onChangeText={onCambiarIp}
         keyboardType="default"
@@ -50,13 +51,13 @@ const FormularioDeConexion = ({
 const estilos = StyleSheet.create({
   contenedor: {
     flex: 1,
-    backgroundColor: "#1e1e1e",
+    backgroundColor: COLORES.FONDO_FORMULARIO,
     justifyContent: "center",
     alignItems: "center",
   },
   titulo: {
     fontSize: 24,
-    color: "#fff",
+    color: COLORES.TEXTO_CLARO,
     fontWeight: "bold",
     marginBottom: 20,
   },
@@ -67,29 +68,29 @@ const estilos = StyleSheet.create({
     gap: 10,
   },
   inputIp: {
-    backgroundColor: "#333",
-    color: "#fff",
-    width: 400, // un poco más angosto para dar lugar al botón
+    backgroundColor: COLORES.INPUT_FONDO,
+    color: COLORES.TEXTO_CLARO,
+    width: 400,
     padding: 15,
     borderRadius: 8,
     fontSize: 16,
     textAlign: "center",
   },
   botonConectarConIp: {
-    backgroundColor: "#007AFF",
+    backgroundColor: COLORES.CONECTAR_IP,
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 8,
   },
   botonConectarConQR: {
-    backgroundColor: "#34C759",
+    backgroundColor: COLORES.CONECTAR_QR,
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 8,
     marginTop: 12,
   },
   textoDeBoton: {
-    color: "#fff",
+    color: COLORES.TEXTO_CLARO,
     fontSize: 18,
     fontWeight: "bold",
   },

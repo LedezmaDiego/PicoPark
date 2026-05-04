@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { COLORES } from "../../constantes/colores";
 
 const IndicadorDeConexion = () => (
   <View style={estilos.contenedor}>
@@ -21,16 +22,12 @@ const estilos = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     marginRight: 6,
-    backgroundColor: "#00FF00",
-    shadowColor: "#00FF00",
+    backgroundColor: COLORES.CONEXION_ACTIVA,
+    shadowColor: COLORES.CONEXION_ACTIVA,
     shadowOpacity: 0.8,
     shadowRadius: 5,
   },
-  texto: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 12,
-  },
+  texto: { color: COLORES.TEXTO_CLARO, fontWeight: "bold", fontSize: 12 },
 });
 
 export default IndicadorDeConexion;

@@ -10,6 +10,7 @@ import BotonDeAccion from "../contenidos/BotonDeAccion";
 import BotonParaSalir from "../contenidos/BotonParaSalir";
 import DPadDeMovimiento from "../contenidos/DPadDeMovimiento";
 import IndicadorDeConexion from "../contenidos/IndicadorDeConexion";
+import { COLORES } from "../../constantes/colores";
 
 type Props = {
   onSalir: () => void;
@@ -45,10 +46,7 @@ const ContenedorDeGamepad = ({
 );
 
 const estilos = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    backgroundColor: "#121212",
-  },
+  contenedor: { flex: 1, backgroundColor: COLORES.FONDO_PRINCIPAL },
   barraSuperior: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -58,10 +56,7 @@ const estilos = StyleSheet.create({
     height: 50,
     zIndex: 10,
   },
-  zonaDeControles: {
-    flex: 1,
-    position: "relative",
-  },
+  zonaDeControles: { flex: 1, position: "relative" },
   capaVisual: {
     ...StyleSheet.absoluteFillObject,
     flexDirection: "row",
