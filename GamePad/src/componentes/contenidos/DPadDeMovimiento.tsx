@@ -10,7 +10,7 @@ const DPadDeMovimiento = ({ onCapturarLayout }: Props) => (
   <View style={estilos.contenedor} onLayout={onCapturarLayout}>
     <View style={estilos.fila}>
       <View style={estilos.botonDireccion}>
-        <Feather name="chevron-up" size={42} color="#555" />
+        <Feather name="chevron-up" size={42} color="white" />
       </View>
     </View>
     <View style={estilos.filaCentro}>
@@ -24,7 +24,7 @@ const DPadDeMovimiento = ({ onCapturarLayout }: Props) => (
     </View>
     <View style={estilos.fila}>
       <View style={estilos.botonDireccion}>
-        <Feather name="chevron-down" size={42} color="#555" />
+        <Feather name="chevron-down" size={42} color="white" />
       </View>
     </View>
   </View>
