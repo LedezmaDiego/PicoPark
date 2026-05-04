@@ -72,7 +72,7 @@ const estilos = StyleSheet.create({
   },
   zonaDeControles: { flex: 1, position: "relative" },
   capaVisual: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
