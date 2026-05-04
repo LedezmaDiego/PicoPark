@@ -13,18 +13,26 @@ const coloresParaJugadores = ["0xff4444", "0x44ff44", "0x4488ff", "0xffff44"];
 function obtenerIPLocal() {
   const interfaces = os.networkInterfaces();
   let mejorIP = null;
+
   for (let nombre in interfaces) {
+    if (
+      nombre.toLowerCase().includes("virtual") ||
+      nombre.toLowerCase().includes("vmware") ||
+      nombre.toLowerCase().includes("hyper-v") ||
+      nombre.toLowerCase().includes("wsl") ||
+      nombre.toLowerCase().includes("vethernet") ||
+      nombre.toLowerCase().includes("loopback")
+    ) {
+      continue;
+    }
+
     for (let net of interfaces[nombre]) {
       if (net.family !== "IPv4" || net.internal) continue;
       const ip = net.address;
-      if (
-        nombre.toLowerCase().includes("virtual") ||
-        nombre.toLowerCase().includes("vmware") ||
-        nombre.toLowerCase().includes("hyper-v") ||
-        nombre.toLowerCase().includes("wsl")
-      ) {
-        continue;
-      }
+
+      // Ignorar IPs de VirtualBox (generalmente 192.168.56.X)
+      if (ip.startsWith("192.168.56.")) continue;
+
       if (
         ip.startsWith("192.168.") ||
         ip.startsWith("10.") ||
@@ -34,9 +42,11 @@ function obtenerIPLocal() {
       ) {
         return ip;
       }
+
       if (!mejorIP) mejorIP = ip;
     }
   }
+
   return mejorIP || "localhost";
 }
 
@@ -51,7 +61,6 @@ io.on("connection", (socket) => {
 
   if (esPantalla) {
     console.log("🖥️  PANTALLA PRINCIPAL CONECTADA");
-    // Emitir evento para resetear el estado del cliente (como presionar F5)
     console.log("📢 Notificando reinicio de servidor a todos los clientes");
     io.emit("servidorReiniciado");
   } else {
@@ -101,4 +110,5 @@ io.on("connection", (socket) => {
 
 http.listen(PUERTO, "0.0.0.0", () => {
   console.log(`🚀 SERVIDOR LISTO EN: http://${ip}:${PUERTO}`);
+  console.log(`📱 Usá esta IP en el gamepad: ${ip}:${PUERTO}`);
 });
