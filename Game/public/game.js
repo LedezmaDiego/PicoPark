@@ -218,7 +218,7 @@ class SceneGame extends Phaser.Scene {
   preload() {}
 
   create() {
-    console.log(`🎮 === INICIANDO NIVEL ${nivelActual} ===`);
+    console.log(`=== INICIANDO NIVEL ${nivelActual} ===`);
 
     this.resetEstado();
     this.cameras.main.setBackgroundColor("#87CEEB");
@@ -336,8 +336,29 @@ class SceneGame extends Phaser.Scene {
       if (this.jugadoresSprites[id]) {
         this.jugadoresSprites[id].sprite.destroy();
         delete this.jugadoresSprites[id];
+        contadorColores--;
       }
     });
+
+    socket.off("nuevoJugador").on("nuevoJugador", ({ idDelSocket, color }) => {
+      if (this.jugadoresSprites[idDelSocket]) return;
+
+      const cantidadActual = Object.keys(this.jugadoresSprites).length; // ← cantidad real
+      const player = this.grupoJugadores.create(
+        100 + cantidadActual * 30, // ← usar cantidadActual, no contadorColores
+        300,
+        "player",
+      );
+      player.setTint(color).setCollideWorldBounds(true).setScale(0.9);
+      player.setVelocity(0, 0);
+      this.jugadoresSprites[idDelSocket] = {
+        sprite: player,
+        controles: { left: false, right: false, jump: false },
+      };
+      contadorColores++;
+      console.log(`👤 Jugador ${idDelSocket} creado via nuevoJugador`);
+    });
+
     socket.off("servidorReiniciado").on("servidorReiniciado", () => {
       nivelActual = 1;
       this.scene.restart();
@@ -347,25 +368,6 @@ class SceneGame extends Phaser.Scene {
   handleInputGame(input) {
     const id = input.idDelSocket;
     if (!input.teclaPresionada) return;
-
-    if (!this.jugadoresSprites[id] && contadorColores < CONFIG.MAX_JUGADORES) {
-      const color =
-        CONFIG.COLORES_JUGADORES[
-          contadorColores % CONFIG.COLORES_JUGADORES.length
-        ];
-      const player = this.grupoJugadores.create(
-        100 + contadorColores * 30,
-        300,
-        "player",
-      );
-      player.setTint(color).setCollideWorldBounds(true).setScale(0.9);
-      this.jugadoresSprites[id] = {
-        sprite: player,
-        controles: { left: false, right: false, jump: false },
-      };
-      contadorColores++;
-      console.log(`👤 Jugador ${id} creado`);
-    }
 
     const j = this.jugadoresSprites[id];
     if (!j) return;

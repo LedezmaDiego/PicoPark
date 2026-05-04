@@ -7,7 +7,7 @@ const os = require("os");
 app.use(express.static("public"));
 
 const PUERTO = 3000;
-let cantidadJugadores = 0;
+const gamepadsConectados = new Set();
 const coloresParaJugadores = ["0xff4444", "0x44ff44", "0x4488ff", "0xffff44"];
 
 function obtenerIPLocal() {
@@ -65,19 +65,17 @@ io.on("connection", (socket) => {
     console.log("Reinicio de juego");
     io.emit("servidorReiniciado");
   } else if (esGamepad) {
-    if (cantidadJugadores >= 4) {
+    if (gamepadsConectados.size >= 4) {
       console.log("Conexion rechazada: sala llena");
       socket.disconnect(true);
       return;
     }
-
-    cantidadJugadores++;
-
-    console.log(`Gamepad conectado - jugadores: ${cantidadJugadores}`);
-
+    gamepadsConectados.add(socket.id);
+    const indice = gamepadsConectados.size - 1;
+    console.log(`Gamepad conectado - jugadores: ${gamepadsConectados.size}`);
     io.emit("nuevoJugador", {
       idDelSocket: socket.id,
-      color: coloresParaJugadores[cantidadJugadores - 1],
+      color: coloresParaJugadores[indice],
     });
   } else {
     // 🔒 Cualquier otra cosa NO cuenta como jugador
@@ -100,8 +98,10 @@ io.on("connection", (socket) => {
     if (esPantalla) {
       console.log("Videojuego desconectado");
     } else if (esGamepad) {
-      cantidadJugadores--;
-      console.log(`Gamepad desconectado - jugadores: ${cantidadJugadores}`);
+      gamepadsConectados.delete(socket.id);
+      console.log(
+        `Gamepad desconectado - jugadores: ${gamepadsConectados.size}`,
+      );
       io.emit("jugadorDesconectado", socket.id);
     }
   });
