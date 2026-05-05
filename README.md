@@ -1,4 +1,4 @@
-# 🎮 PicoPark — Videojuego multijugador local
+# PicoPark — Videojuego multijugador local
 
 Un clon de Pico Park jugable desde el navegador, donde cada jugador usa su celular como gamepad físico. Colaboración obligatoria: si no trabajan en equipo, no pasan el nivel.
 
@@ -18,7 +18,7 @@ Los jugadores se conectan a la misma red Wi-Fi que la computadora y controlan su
 ## Requisitos
 
 ### Para la computadora (servidor del juego)
-- [Node.js](https://nodejs.org/) instalado
+- [Bun](https://bun.sh/) instalado
 - Estar conectado a una red Wi-Fi local
 
 ### Para los jugadores (gamepad)
@@ -45,8 +45,8 @@ En la computadora, abrí una terminal en la carpeta `Game` y ejecutá:
 
 ```bash
 cd Game
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 La terminal va a mostrar algo así:
@@ -92,20 +92,20 @@ Una vez conectado, el gamepad muestra los controles y aparece un punto verde de 
 
 | Botón | Acción |
 |---|---|
-| D-Pad (←→↑↓) | Mover el personaje |
-| Botón **A** | Saltar |
-| ↑ cerca de la puerta | Entrar a la puerta (si está abierta) |
-| ↓ dentro de la puerta | Salir |
+| D-Pad (izquierda / derecha) | Mover el personaje |
+| D-Pad arriba (cerca de la puerta) | Entrar a la puerta |
+| D-Pad abajo (dentro de la puerta) | Salir |
+| Boton A | Saltar |
 
 ---
 
 ## Mecánicas del juego
 
 - Hasta **4 jugadores** simultáneos
-- Hay que conseguir la **llave** 🗝️ y llevarla hasta la **puerta** para abrirla
-- **Todos los jugadores** deben entrar a la puerta para completar el nivel
-- Si alguno cae al **agua**, el equipo vuelve al inicio
-- Hay **botones** que activan puentes o trampolines — la colaboración es clave
+- Hay que conseguir la llave y llevarla hasta la puerta para abrirla
+- Todos los jugadores deben entrar a la puerta para completar el nivel
+- Si alguno cae al agua, el equipo vuelve al inicio
+- Hay botones que activan puentes o trampolines — la colaboración es clave
 
 ### Nivel 1
 Encontrá la llave, cruzá usando los botones para activar los puentes y entrá todos por la puerta.
@@ -122,7 +122,7 @@ Los botones activan trampolines con cuenta regresiva. Coordiná quién pisa el b
 - Desactivá el firewall de Windows o creá una excepción para el puerto 3000
 
 **La APK no se instala**
-- Habilitá "Instalar aplicaciones de orígenes desconocidos" en Ajustes → Seguridad del celular
+- Habilitá "Instalar aplicaciones de orígenes desconocidos" en Ajustes > Seguridad del celular
 
 **El juego no aparece en el navegador**
 - Asegurate de usar la IP local que muestra la terminal, no `localhost`
@@ -143,6 +143,6 @@ Los botones activan trampolines con cuenta regresiva. Coordiná quién pisa el b
 
 ## Releases
 
-| Versión | Descarga |
+| Version | Descarga |
 |---|---|
 | v1.0.0 | [Gamepad-v1.0.0.apk](https://github.com/LedezmaDiego/PicoPark/releases/download/v1.0.0/Gamepad-v1.0.0.apk) |
