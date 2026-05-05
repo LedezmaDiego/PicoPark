@@ -11,7 +11,7 @@ El proyecto tiene dos partes:
 - **Game** — el videojuego que corre en una computadora y se ve en pantalla
 - **GamePad** — la app para Android que convierte el celular en un control
 
-Los jugadores se conectan a la misma red Wi-Fi que la computadora y controlan sus personajes desde el celular en tiempo real.
+Los jugadores se conectan a la misma red que la computadora y controlan sus personajes desde el celular en tiempo real.
 
 ---
 
@@ -19,11 +19,11 @@ Los jugadores se conectan a la misma red Wi-Fi que la computadora y controlan su
 
 ### Para la computadora (servidor del juego)
 - [Bun](https://bun.sh/) instalado
-- Estar conectado a una red Wi-Fi local
+- Estar conectado a una red local
 
 ### Para los jugadores (gamepad)
 - Un celular Android
-- Estar conectado a la **misma red Wi-Fi** que la computadora
+- Estar conectado a la **misma red** que la computadora
 
 ---
 
@@ -94,7 +94,7 @@ Una vez conectado, el gamepad muestra los controles y aparece un punto verde de 
 |---|---|
 | D-Pad (izquierda / derecha) | Mover el personaje |
 | D-Pad arriba (cerca de la puerta) | Entrar a la puerta |
-| D-Pad abajo (dentro de la puerta) | Salir |
+| D-Pad abajo | Nada solo por motivos esteticos |
 | Boton A | Saltar |
 
 ---
@@ -118,7 +118,7 @@ Los botones activan trampolines con cuenta regresiva. Coordiná quién pisa el b
 ## Solución de problemas
 
 **El celular no puede conectarse**
-- Verificá que el celular y la computadora estén en la misma red Wi-Fi
+- Verificá que el celular y la computadora estén en la misma red local
 - Desactivá el firewall de Windows o creá una excepción para el puerto 3000
 
 **La APK no se instala**
