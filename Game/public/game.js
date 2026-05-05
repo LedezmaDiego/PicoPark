@@ -34,23 +34,23 @@ const mapaNivel1 = [
   [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
 ];
 
+// MAPA 2: Botón de vuelta en su lugar, puerta y base ajustadas.
 const mapaNivel2 = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0], // Puerta
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0], // Llave en 14, Plataforma en 46
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // Botón en 37
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // Plataforma botón
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [1,1,1,1,0,0,1,0,0,1,0,0,1,1,1,1,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,1,1,1,1,0,0,0,0,11,11,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+  [1,1,1,1,0,0,1,0,0,1,0,0,1,1,1,1,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,1,1,1,1,0,0,0,0,11,11,11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // Trampolines
   [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
 ];
 
 function obtenerMapaActual() {
-  console.log(`🗺️ Cargando NIVEL ${nivelActual}`);
   if (nivelActual === 1) return mapaNivel1;
   if (nivelActual === 2) return mapaNivel2;
   nivelActual = 1;
@@ -139,11 +139,11 @@ class SceneGame extends Phaser.Scene {
       ctx.fillRect(2, 2, w-4, 16);
     }
     else if (key === "trampoline") {
-      ctx.fillStyle = "#7f8c8d"; // Base
+      ctx.fillStyle = "#7f8c8d"; 
       ctx.fillRect(5, 30, 40, 20);
-      ctx.fillStyle = "#e67e22"; // Tela
+      ctx.fillStyle = "#e67e22"; 
       ctx.fillRect(10, 25, 30, 5);
-      ctx.fillStyle = "#d35400"; // Sombra
+      ctx.fillStyle = "#d35400"; 
       ctx.fillRect(10, 28, 30, 2);
     }
     else if (key === "cloud") { 
@@ -291,8 +291,11 @@ class SceneGame extends Phaser.Scene {
       player.setData("id", idDelSocket);
       player.setTint(color).setCollideWorldBounds(true).setScale(0.9);
       
+      // Movimiento con fricción para no glitchear la torre humana
       player.body.setSize(40, 40);
       player.body.setOffset(0, 0);
+      player.setDragX(2500); 
+      player.setMaxVelocity(CONFIG.VELOCIDAD_JUGADOR, 1500);
 
       this.jugadoresSprites[idDelSocket] = {
         sprite: player,
@@ -334,6 +337,8 @@ class SceneGame extends Phaser.Scene {
     this.equipoTieneLlave = false; this.puertaAbierta = false; this.jugadorConLlaveId = null;
     
     this.trampolines.getChildren().forEach(tramp => {
+      const timerEvent = tramp.getData("timerEvent");
+      if (timerEvent) timerEvent.remove();
       tramp.setData("estado", "idle");
       tramp.getData("txt").setText("");
     });
@@ -411,6 +416,7 @@ class SceneGame extends Phaser.Scene {
       }
     });
 
+    // NIVEL 1: Los puentes se encienden si se está pisando el botón
     this.puentes.getChildren().forEach(pte => {
       if (algunBotonPisado) {
         pte.body.enable = true; pte.setAlpha(1);
@@ -419,23 +425,18 @@ class SceneGame extends Phaser.Scene {
       }
     });
 
+    // NIVEL 2: El botón inicia la cuenta del trampolín UNA sola vez. ¡Y podés bajarte a esperar al trampolín!
     this.trampolines.getChildren().forEach(tramp => {
       if (algunBotonPisado && tramp.getData("estado") === "idle") {
-        tramp.setData("estado", "contando");
+        tramp.setData("estado", "contando"); // Bloqueamos para que no se dupliquen relojes
         let contador = 5; 
         const txt = tramp.getData("txt");
         txt.setText(contador);
 
-        this.time.addEvent({
+        const timerEvent = this.time.addEvent({
           delay: 1000,
           repeat: 4, 
           callback: () => {
-            if (!algunBotonPisado) {
-              txt.setText("");
-              tramp.setData("estado", "idle");
-              return;
-            }
-
             contador--;
             if (contador > 0) {
               txt.setText(contador);
@@ -447,20 +448,19 @@ class SceneGame extends Phaser.Scene {
                 const p = j.sprite;
                 const distHorizontal = Math.abs(p.x - tramp.x);
                 const distVertical = tramp.y - p.y;
-                if (distHorizontal < 40 && distVertical > 0 && distVertical < 70) {
+                if (distHorizontal < 45 && distVertical > 0 && distVertical < 70) {
                   p.setVelocityY(-850); 
                 }
               });
 
               this.time.delayedCall(1500, () => {
-                tramp.setData("estado", "idle");
+                tramp.setData("estado", "idle"); // Vuelve a estar disponible tras 1.5s
               });
             }
           }
         });
-      } else if (!algunBotonPisado && tramp.getData("estado") === "contando") {
-        tramp.setData("estado", "idle");
-        tramp.getData("txt").setText("");
+        // Lo guardamos por las dudas (ahora ya no se destruye al soltar el botón)
+        tramp.setData("timerEvent", timerEvent); 
       }
     });
 
@@ -476,9 +476,9 @@ class SceneGame extends Phaser.Scene {
         continue; 
       }
 
-      if (j.controles.left) p.setVelocityX(-CONFIG.VELOCIDAD_JUGADOR);
-      else if (j.controles.right) p.setVelocityX(CONFIG.VELOCIDAD_JUGADOR);
-      else p.setVelocityX(0);
+      if (j.controles.left) p.setAccelerationX(-2500);
+      else if (j.controles.right) p.setAccelerationX(2500);
+      else p.setAccelerationX(0);
 
       if (j.controles.jump && p.body.blocked.down) { p.setVelocityY(-CONFIG.SALTO_FUERZA); j.controles.jump = false; }
 
