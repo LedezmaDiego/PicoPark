@@ -11,6 +11,16 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -23,10 +33,17 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.GamePad",
-      "permissions": ["android.permission.CAMERA"]
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e7719df1-0329-4a45-aa65-f310299a8740"
+      }
     }
   }
 }
